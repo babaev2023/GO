@@ -51,3 +51,5 @@ Go lvl1
 ##Lec24 Function++
 
 ##Lec25 Константы
+
+##Lec26 Указатели
