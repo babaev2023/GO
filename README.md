@@ -51,8 +51,8 @@ Lec45 Пакеты
 Lec46 Пакеты порядок выполнения  
 Lec47 Модульное тестирование  
 Lec48 DEFER  
-Lec49 Error и PANIC
-Lec50 GoRoutine и Каналы
+Lec49 Error и PANIC  
+Lec50 GoRoutine и Каналы  
   
  
   
