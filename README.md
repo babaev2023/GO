@@ -56,6 +56,7 @@ Lec50 GoRoutine и Каналы
 Lec51 Закрытие канала  
 Lec52 Буферезированный канал   
 Lec53 WaitGroup  
+Lec54 SELECT  
 
   
  
