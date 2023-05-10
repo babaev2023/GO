@@ -54,6 +54,7 @@ Lec48 DEFER
 Lec49 Error и PANIC  
 Lec50 GoRoutine и Каналы  
 Lec51 Закрытие канала  
+Lec52  Буферезированный канал   
   
  
   
