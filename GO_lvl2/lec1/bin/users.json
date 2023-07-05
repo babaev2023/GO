@@ -1,0 +1,40 @@
+{
+    "users" : [
+        {
+            "name" : "Alex",
+            "type" : "Admin",
+            "age" : 32,
+            "social" : {
+                "vkontakte" : "https://vk.com/id=11111",
+                "facebook": "https://fb.com/id=11111"
+            }
+        },
+        {
+            "name" : "Bob",
+            "type" : "Regular",
+            "age" : 22,
+            "social" : {
+                "vkontakte" : "https://vk.com/id=22222",
+                "facebook": "https://fb.com/id=22222"
+            }
+        },
+        {
+            "name" : "Alice",
+            "type" : "Regular",
+            "age" : 19,
+            "social" : {
+                "vkontakte" : "https://vk.com/id=33333",
+                "facebook": "https://fb.com/id=333333"
+            }
+        },
+        {
+            "name" : "George",
+            "type" : "Regular",
+            "age" : 42,
+            "social" : {
+                "vkontakte" : "https://vk.com/id=44444",
+                "facebook": "https://fb.com/id=444444"
+            }
+        }
+    ]
+}
