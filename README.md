@@ -58,6 +58,9 @@ Lec52 Буферезированный канал
 Lec53 WaitGroup  
 Lec54 SELECT  
 
+# GO lvl2  
+Lec1 JSON  
+
   
  
   
