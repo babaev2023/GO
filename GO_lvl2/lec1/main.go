@@ -39,6 +39,19 @@ func PrintUser(u *User) {
 	fmt.Printf("Social. FB: %s\n", u.Social.Facebook)
 }
 
+// Сериализация
+type Professor struct {
+	Name       string     `json:"name"`
+	ScienceID  int        `json:"science_id"`
+	IsWorking  bool       `json:"is_working"`
+	University University `json:"university"`
+}
+
+type University struct {
+	Name string `json:"name"`
+	City string `json:"city"`
+}
+
 // 1. Рассмотрим процесс десериализации (то есть когда из последовательности в объект)
 func main() {
 	//1. Создадим файл дескриптор
@@ -65,4 +78,28 @@ func main() {
 		fmt.Println("==============")
 		PrintUser(&u)
 	}
+
+	//Сериализация
+	fmt.Println("=====Сериализация======")
+	prof1 := Professor{
+		Name:      "Stefan",
+		ScienceID: 1111111,
+		IsWorking: true,
+		University: University{
+			Name: "MGU",
+			City: "Moscow",
+		},
+	}
+
+	//Превратим профессора в последовательность байтов
+	byteArr, err := json.MarshalIndent(prof1, "", "\t")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(string(byteArr))
+	err = os.WriteFile("output.json", byteArr, 0666) //-rw-rw-rw-
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
