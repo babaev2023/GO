@@ -60,3 +60,11 @@ api.exe -path configs/api.toml
 go get -u github.com/gorilla/mux
 ```
 
+'''
+go build -v ./cmd/api/
+'''
+
+### Loger
+'''
+go get github.com/sirupsen/logrus
+'''
