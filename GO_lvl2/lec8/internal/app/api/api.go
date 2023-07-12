@@ -48,7 +48,7 @@ func (api *API) Start() error {
 		return err
 	}
 
-	//На этапе валидного завршениея стратуем http-сервер
+	//На этапе валидного завершения стратуем http-сервер
 	return http.ListenAndServe(api.config.BindAddr, api.router)
 
 }
