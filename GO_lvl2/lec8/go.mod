@@ -1,4 +1,4 @@
-module github.com/babaev2023/GO/GO_lvl2/lec7
+module github.com/babaev2023/GO/GO_lvl2/lec8
 
 go 1.20
 
