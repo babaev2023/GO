@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 
+	"github.com/babaev2023/GO/GO_lvl2/lec9/internal/app/middleware"
 	"github.com/babaev2023/GO/GO_lvl2/lec9/internal/app/models"
+	"github.com/form3tech-oss/jwt-go"
 	"github.com/gorilla/mux"
 )
 
@@ -240,6 +243,97 @@ func (api *APIServer) PostUserRegister(writer http.ResponseWriter, req *http.Req
 	msg := Message{
 		StatusCode: 201,
 		Message:    fmt.Sprintf("User {login:%s} successfully registered!", userAdded.Login),
+		IsError:    false,
+	}
+	writer.WriteHeader(201)
+	json.NewEncoder(writer).Encode(msg)
+
+}
+
+// -------------------------------------------------------------------------------//
+func (api *APIServer) PostToAuth(writer http.ResponseWriter, req *http.Request) {
+	initHeaders(writer)
+	api.logger.Info("Post to Auth POST /api/v1/user/auth")
+	var userFromJson models.User
+	err := json.NewDecoder(req.Body).Decode(&userFromJson)
+	//Обрабатываем случай, если json - вовсе не json или в нем какие-либо пробелмы
+	if err != nil {
+		api.logger.Info("Invalid json recieved from client")
+		msg := Message{
+			StatusCode: 400,
+			Message:    "Provided json is invalid",
+			IsError:    true,
+		}
+		writer.WriteHeader(400)
+		json.NewEncoder(writer).Encode(msg)
+		return
+	}
+	//Необходимо попытаться обнаружить пользователя с таким login в бд
+	userInDB, ok, err := api.store.User().FindByLogin(userFromJson.Login)
+	// Проблема доступа к бд
+	if err != nil {
+		api.logger.Info("Can not make user search in database:", err)
+		msg := Message{
+			StatusCode: 500,
+			Message:    "We have some troubles while accessing database",
+			IsError:    true,
+		}
+		writer.WriteHeader(500)
+		json.NewEncoder(writer).Encode(msg)
+		return
+	}
+
+	//Если подключение удалось , но пользователя с таким логином нет
+	if !ok {
+		api.logger.Info("User with that login does not exists")
+		msg := Message{
+			StatusCode: 400,
+			Message:    "User with that login does not exists in database. Try register first",
+			IsError:    true,
+		}
+		writer.WriteHeader(400)
+		json.NewEncoder(writer).Encode(msg)
+		return
+	}
+
+	//Если пользователь с таким логином есть в бд - проверим, что у него пароль совпадает с фактическим
+	if userInDB.Password != userFromJson.Password {
+		api.logger.Info("Invalid credetials to auth")
+		msg := Message{
+			StatusCode: 404,
+			Message:    "Your password is invalid",
+			IsError:    true,
+		}
+		writer.WriteHeader(404)
+		json.NewEncoder(writer).Encode(msg)
+		return
+	}
+
+	//Теперь выбиваем токен как знак успешной аутентифкации
+	token := jwt.New(jwt.SigningMethodHS256)             // Тот же метод подписания токена, что и в JwtMiddleware.go
+	claims := token.Claims.(jwt.MapClaims)               // Дополнительные действия (в формате мапы) для шифрования
+	claims["exp"] = time.Now().Add(time.Hour * 5).Unix() //Время жизни токена
+	claims["admin"] = true
+	claims["name"] = userInDB.Login
+	tokenString, err := token.SignedString(middleware.SecretKey)
+	//tokenString, _ := token.SignedString(middleware.SecretKey) - так делать не надо)
+
+	//В случае, если токен выбить не удалось!
+	if err != nil {
+		api.logger.Info("Can not claim jwt-token")
+		msg := Message{
+			StatusCode: 500,
+			Message:    "We have some troubles. Try again",
+			IsError:    true,
+		}
+		writer.WriteHeader(500)
+		json.NewEncoder(writer).Encode(msg)
+		return
+	}
+	//В случае, если токен успешно выбит - отдаем его клиенту
+	msg := Message{
+		StatusCode: 201,
+		Message:    tokenString,
 		IsError:    false,
 	}
 	writer.WriteHeader(201)

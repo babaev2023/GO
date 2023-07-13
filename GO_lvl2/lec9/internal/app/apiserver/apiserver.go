@@ -3,6 +3,7 @@ package apiserver
 import (
 	"net/http"
 
+	"github.com/babaev2023/GO/GO_lvl2/lec9/internal/app/middleware"
 	"github.com/babaev2023/GO/GO_lvl2/lec9/store"
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
@@ -57,10 +58,19 @@ func (s *APIServer) configureLogger() error {
 // func for configure Router
 func (s *APIServer) configureRouter() {
 	s.router.HandleFunc(prefix+"/articles", s.GetAllArticles).Methods("GET")
-	s.router.HandleFunc(prefix+"/articles"+"/{id}", s.GetArticleById).Methods("GET")
+
+	//Было до JWT
+	//s.router.HandleFunc(prefix+"/articles"+"/{id}", s.GetArticleById).Methods("GET")
+	//Теперь требует наличия JWT
+	s.router.Handle(prefix+"/articles"+"/{id}", middleware.JwtMiddleware.Handler(http.HandlerFunc(s.GetArticleById))).Methods("GET")
+	//
+
 	s.router.HandleFunc(prefix+"/articles"+"/{id}", s.DeleteArticleById).Methods("DELETE")
 	s.router.HandleFunc(prefix+"/articles", s.PostArticle).Methods("POST")
 	s.router.HandleFunc(prefix+"/user/register", s.PostUserRegister).Methods("POST")
+	//new pair for auth
+	s.router.HandleFunc(prefix+"/user/auth", s.PostToAuth).Methods("POST")
+
 }
 
 // configureStore method
